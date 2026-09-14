@@ -1,0 +1,4 @@
+transaction_id,product_name,category,quantity,unit_price
+0,Bad ID,Electronics,1,10.00
+1002,  ,Electronics,1,10.00
+1003,Bad Qty,Electronics,-1,10.00

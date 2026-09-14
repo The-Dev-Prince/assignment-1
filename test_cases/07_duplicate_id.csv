@@ -1,0 +1,3 @@
+transaction_id,product_name,category,quantity,unit_price
+1001,Laptop,Electronics,1,800.00
+1001,Mouse,Electronics,2,25.00

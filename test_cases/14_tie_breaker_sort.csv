@@ -1,0 +1,4 @@
+transaction_id,product_name,category,quantity,unit_price
+2005,Item B,Office,2,50.00
+1002,Item A,Office,1,100.00
+3001,Item C,Office,4,25.00

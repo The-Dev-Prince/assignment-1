@@ -1,0 +1,4 @@
+transaction_id,product_name,category,quantity,unit_price
+1001,Cable,Electronics,1,-15.50
+1002,Adapter,Electronics,1,free
+1003,Hub,Electronics,1,19.999

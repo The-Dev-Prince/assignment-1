@@ -1,0 +1,3 @@
+transaction_id,product_name,category,quantity,unit_price
+1001,Laptop,Electronics,2
+1002,Keyboard,Electronics,5,49.95,extra_value

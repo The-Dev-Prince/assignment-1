@@ -1,5 +1,12 @@
 transaction_id,product_name,category,quantity,unit_price
 1001,Laptop,Electronics,2,799.99
-1002,Keyboard,Electronics,5,49.95
-1003,Desk,Furniture,2,249.50
+1002,Desk,Furniture,2,249.50
+1003,,Electronics,1,19.99
 1004,Chair,Furniture,4,129.95
+1001,Duplicate Laptop,Electronics,1,799.99
+1005,Monitor,Electronics,0,199.99
+1006,Mouse,Electronics,3,25.50
+1007,Notebook,Office,10,4.75
+1008,Pen Pack,Office,5,invalid_price
+1009,Backpack,Luggage,2,85.00
+1010,Headphones,Electronics,1,1599.98
