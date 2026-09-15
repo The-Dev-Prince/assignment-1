@@ -1,0 +1,4 @@
+row 4 did not have a product name
+row 6 had a duplicate transaction id
+row 7 did not have a valid quantity
+row 10 unit price must be numeric

@@ -102,10 +102,6 @@ def validation(trow, rownum):
     valid_records.append(trow)
     bussiness(trow)
 
-
-
-
-
     
 with open(file_path, mode="r", encoding="utf-8") as f:
     lines = csv.reader(f)
@@ -136,8 +132,71 @@ with open(file_path, mode="r", encoding="utf-8") as f:
         trow = [col.strip() for col in row]
         validation(trow, rownum)
 
-    if len(valid_records) == 0 and len(invalid_records) == 0:
-        print("File has a header but no data rows.")
 
-print(valid_records)
-print(invalid_records)
+def empty():
+    with open("output/report.txt", "w", encoding="utf-8") as rf:
+        rf.write("Valid transactions: 0\n")
+        rf.write("Invalid transactions: 0\n")
+        rf.write("Total revenue: 0.00\n")
+        rf.write("Highest-value transaction: N/A\n")
+    with open("output/errors.txt", "w", encoding="utf-8") as ef:
+        ef.write("No invalid records\n")
+    print("no valid records are avalible")
+    sys.exit(0)
+
+
+os.makedirs("output", exist_ok=True)
+if len(valid_records) == 0 and len(invalid_records) == 0:
+    empty()
+        
+
+sortedval = sorted(valid_records, key=lambda r:(-(int(r[3])) * float(r[4]), int(r[0])))
+
+def request():
+    print("Please give a Transaction ID to lookup")
+    lookup = input("ID:")
+    try: 
+        lookup = int(lookup)
+        if lookup <= 0:
+            print("Input cannot be 0 or negative")
+            request()
+        else:
+            found = False
+            for record in valid_records:
+                if int(record[0]) == lookup:
+                    print(f"Transaction ID: {record[0]}")
+                    print(f"Product Name: {record[1]}")
+                    print(f"Category: {record[2]}")
+                    print(f"Quantity: {record[3]}")
+                    print(f"Unit Price: {record[4]}")
+                    found = True
+                    break
+            if not found:
+                print("Transaction ID not found.")
+    except ValueError:
+        print("Input cannot be 0 or negative")
+        request()
+if len(valid_records) == 0:
+    print("No valid records to process.")
+else:
+    request()
+
+with open("output/errors.txt", "w", encoding="utf-8") as ef:
+    if len(invalid_records) == 0:
+        ef.write("No invalid records\n")
+    else:
+        for err in invalid_records:
+            ef.write(f"{err}\n")
+
+with open("output/report.txt", "w", encoding="utf-8") as rf:
+    rf.write(f"Valid transactions: {len(valid_records)}\n")
+    rf.write(f"Invalid transactions: {len(invalid_records)}\n")
+    rf.write(f"Total revenue: {total_revenue:.2f}\n")
+    rf.write(f"Highest-value transaction: {highest_transaction if highest_transaction else 'N/A'}\n")
+    rf.write("\nRevenue by Category:\n")
+    for cat in sorted(category_totals.keys()):
+        rf.write(f"{cat}: {category_totals[cat]:.2f}\n")
+    rf.write("\nSorted Valid Transactions:\n")
+    for record in sortedval:
+        rf.write(f"{record}\n")
+        
