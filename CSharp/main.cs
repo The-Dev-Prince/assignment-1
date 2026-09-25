@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace TransactionAnalyzer
 {
@@ -31,18 +32,37 @@ namespace TransactionAnalyzer
         private static readonly List<Transaction> ValidRecords = new List<Transaction>();
         private static readonly List<string> InvalidRecords = new List<string>();
 
+        private static string _outputDir = "output";
+
         static void Main(string[] args)
         {
-            string filePath = Path.Combine("input", "transactions.csv");
+            // Dynamically walk up directory tree until input/transactions.csv is found
+            string? currentDir = Directory.GetCurrentDirectory();
+            string? foundFilePath = null;
 
-            if (!File.Exists(filePath))
+            while (currentDir != null)
             {
-                Console.WriteLine($"Error: {filePath} not found.");
+                string candidate = Path.Combine(currentDir, "input", "transactions.csv");
+                if (File.Exists(candidate))
+                {
+                    foundFilePath = candidate;
+                    _outputDir = Path.Combine(currentDir, "output");
+                    break;
+                }
+                DirectoryInfo? parent = Directory.GetParent(currentDir);
+                currentDir = parent?.FullName;
+            }
+
+            if (foundFilePath == null)
+            {
+                Console.WriteLine("Error: input/transactions.csv not found in this folder or any parent folders.");
                 Environment.Exit(1);
             }
 
-            // Ensure output directory exists
-            Directory.CreateDirectory("output");
+            string filePath = foundFilePath;
+
+            // Ensure output directory exists in the same root folder
+            Directory.CreateDirectory(_outputDir);
 
             string[] lines = File.ReadAllLines(filePath);
 
@@ -50,12 +70,17 @@ namespace TransactionAnalyzer
             if (lines.Length == 0)
             {
                 Console.WriteLine($"Error: {filePath} is empty.");
+                WriteEmptyReportsAndExit();
                 Environment.Exit(0);
             }
 
-            // Check header
+            // Check header (strip potential UTF-8 BOM)
             string[] correctHeader = { "transaction_id", "product_name", "category", "quantity", "unit_price" };
             string[] header = SplitCsvLine(lines[0]);
+            if (header.Length > 0)
+            {
+                header[0] = header[0].TrimStart('\uFEFF');
+            }
 
             if (!header.SequenceEqual(correctHeader))
             {
@@ -79,7 +104,6 @@ namespace TransactionAnalyzer
                 // Rule 1: Exactly 5 columns
                 if (fields.Length != 5)
                 {
-                    Console.WriteLine($"Error: {filePath} has a row with an incorrect number of columns: {rawLine}");
                     InvalidRecords.Add($"row {rowNum} did not have 5 columns");
                     continue;
                 }
@@ -113,7 +137,7 @@ namespace TransactionAnalyzer
             }
 
             // Write output/errors.txt
-            using (var ef = new StreamWriter(Path.Combine("output", "errors.txt")))
+            using (var ef = new StreamWriter(Path.Combine(_outputDir, "errors.txt")))
             {
                 if (InvalidRecords.Count == 0)
                 {
@@ -129,7 +153,7 @@ namespace TransactionAnalyzer
             }
 
             // Write output/report.txt
-            using (var rf = new StreamWriter(Path.Combine("output", "report.txt")))
+            using (var rf = new StreamWriter(Path.Combine(_outputDir, "report.txt")))
             {
                 rf.WriteLine($"Valid transactions: {ValidRecords.Count}");
                 rf.WriteLine($"Invalid transactions: {InvalidRecords.Count}");
@@ -147,7 +171,7 @@ namespace TransactionAnalyzer
                 rf.WriteLine("\nRevenue by Category:");
                 foreach (var kvp in CategoryTotals)
                 {
-                    rf.WriteLine($"{kvp.Key}: {kvp.Value:F2}");
+                    rf.WriteLine($"  {kvp.Key}: {kvp.Value:F2}");
                 }
 
                 rf.WriteLine("\nSorted Valid Transactions:");
@@ -231,7 +255,7 @@ namespace TransactionAnalyzer
                 return;
             }
 
-            // Passed all 8 validation checks
+            // Passed all validation checks
             SeenIds.Add(tid);
 
             var tx = new Transaction
@@ -241,7 +265,7 @@ namespace TransactionAnalyzer
                 Category = trow[2],
                 Quantity = qty,
                 Price = price,
-                Value = qty * price
+                Value = Math.Round(qty * price, 2)
             };
 
             ValidRecords.Add(tx);
@@ -281,7 +305,7 @@ namespace TransactionAnalyzer
             while (true)
             {
                 Console.WriteLine("Please give a Transaction ID to lookup");
-                Console.Write("ID:");
+                Console.Write("ID: ");
                 string? input = Console.ReadLine();
 
                 if (!int.TryParse(input, out int lookup) || lookup <= 0)
@@ -309,7 +333,7 @@ namespace TransactionAnalyzer
 
         private static void WriteEmptyReportsAndExit()
         {
-            using (var rf = new StreamWriter(Path.Combine("output", "report.txt")))
+            using (var rf = new StreamWriter(Path.Combine(_outputDir, "report.txt")))
             {
                 rf.WriteLine("Valid transactions: 0");
                 rf.WriteLine("Invalid transactions: 0");
@@ -317,21 +341,20 @@ namespace TransactionAnalyzer
                 rf.WriteLine("Highest-value transaction: N/A");
             }
 
-            using (var ef = new StreamWriter(Path.Combine("output", "errors.txt")))
+            using (var ef = new StreamWriter(Path.Combine(_outputDir, "errors.txt")))
             {
                 ef.WriteLine("No invalid records");
             }
 
-            Console.WriteLine("no valid records are avalible");
+            Console.WriteLine("no valid records are available");
             Environment.Exit(0);
         }
 
-        // Standard CSV field splitter respecting quoted fields
         private static string[] SplitCsvLine(string line)
         {
             var result = new List<string>();
             bool inQuotes = false;
-            string current = string.Empty;
+            var current = new StringBuilder();
 
             for (int i = 0; i < line.Length; i++)
             {
@@ -343,15 +366,15 @@ namespace TransactionAnalyzer
                 }
                 else if (c == ',' && !inQuotes)
                 {
-                    result.Add(current);
-                    current = string.Empty;
+                    result.Add(current.ToString());
+                    current.Clear();
                 }
                 else
                 {
-                    current += c;
+                    current.Append(c);
                 }
             }
-            result.Add(current);
+            result.Add(current.ToString());
 
             return result.ToArray();
         }

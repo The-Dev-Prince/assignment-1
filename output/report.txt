@@ -1,7 +1,7 @@
 Valid transactions: 7
 Invalid transactions: 4
 Total revenue: 4512.76
-Highest-value transaction: ID=1001, Product=Laptop, Category=Electronics, Qty=2, Price=799.99, Value=1599.98
+Highest-value transaction: {'id': 1001, 'product': 'Laptop', 'category': 'Electronics', 'quantity': 2, 'price': 799.99, 'value': 1599.98}
 
 Revenue by Category:
   Electronics: 3276.46
@@ -10,10 +10,10 @@ Revenue by Category:
   Office: 47.50
 
 Sorted Valid Transactions:
-ID=1001, Product=Laptop, Category=Electronics, Qty=2, Price=799.99, Value=1599.98
-ID=1010, Product=Headphones, Category=Electronics, Qty=1, Price=1599.98, Value=1599.98
-ID=1004, Product=Chair, Category=Furniture, Qty=4, Price=129.95, Value=519.80
-ID=1002, Product=Desk, Category=Furniture, Qty=2, Price=249.50, Value=499.00
-ID=1009, Product=Backpack, Category=Luggage, Qty=2, Price=85.00, Value=170.00
-ID=1006, Product=Mouse, Category=Electronics, Qty=3, Price=25.50, Value=76.50
-ID=1007, Product=Notebook, Category=Office, Qty=10, Price=4.75, Value=47.50
+['1001', 'Laptop', 'Electronics', '2', '799.99']
+['1010', 'Headphones', 'Electronics', '1', '1599.98']
+['1004', 'Chair', 'Furniture', '4', '129.95']
+['1002', 'Desk', 'Furniture', '2', '249.50']
+['1009', 'Backpack', 'Luggage', '2', '85.00']
+['1006', 'Mouse', 'Electronics', '3', '25.50']
+['1007', 'Notebook', 'Office', '10', '4.75']
