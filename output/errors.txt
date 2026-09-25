@@ -1,4 +1,4 @@
-row 4 did not have a product name
+row 4 has empty product_name
 row 6 had a duplicate transaction id
-row 7 did not have a valid quantity
-row 10 unit price must be numeric
+row 7 has invalid quantity
+row 10 has invalid unit_price

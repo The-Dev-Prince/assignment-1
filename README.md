@@ -8,4 +8,7 @@ IDE vs code
 
 OS windows 11
 
-To run hit run and debug and it will pull from input.csv in input. ALL outputs will be sent to output folder. All Test case were ran and can be run by either copying their contents or adjusting input target to the desired test case. all code ran and returned equivalent results.
+To run for C# and Python hit run and debug and it will pull from input.csv in input. ALL outputs will be sent to output folder. All Test case were ran and can be run by either copying their contents or adjusting input target to the desired test case. all code ran and returned equivalent results.
+
+
+To run for PHP write Set-Location PHP; php main.php in terminal. All Test case were ran and can be run by either copying their contents or adjusting input target to the desired test case. all code ran and returned equivalent results.
